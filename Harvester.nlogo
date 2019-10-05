@@ -284,13 +284,13 @@ to update-outputs
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-264
-10
-672
-419
+620
+35
+1328
+744
 -1
 -1
-8.0
+14.0
 1
 10
 1
@@ -409,10 +409,10 @@ PENS
 "default" 10.0 1 -16777216 false "" ""
 
 PLOT
-281
-428
-533
-615
+275
+430
+527
+617
 Selfish
 Energy
 Number of harvesters
@@ -448,15 +448,15 @@ SWITCH
 192
 file-output?
 file-output?
-0
+1
 1
 -1000
 
 PLOT
-539
-428
-739
-578
+275
+205
+525
+390
 Greediness of selfish harvesters
 Ticks
 Mean greediness
@@ -900,7 +900,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -917,5 +917,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@
