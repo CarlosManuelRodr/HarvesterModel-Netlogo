@@ -69,7 +69,15 @@ to setup
     [ ask patches [set max-resource (0.5 * max-resource-mean) + random max-resource-mean ] ]
     [
       ifelse landscape-type = "normal"
-      [ ask patches [set max-resource random-normal max-resource-mean max-resource-sd] ]
+      [ ask patches
+        [
+          set max-resource random-normal max-resource-mean max-resource-sd
+          if max-resource < 0.0 ; Normal distribution has a slight probability of negative max-resource
+          [
+             set max-resource 0.0 ; Manual fix.
+          ]
+        ]
+      ]
       [
         ifelse landscape-type = "exponential"
         [ ask patches [set max-resource random-exponential max-resource-mean] ]
