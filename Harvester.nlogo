@@ -80,6 +80,7 @@ to setup
 
   ask patches
   [
+    set resource max-resource / 2
     set pcolor scale-color green resource 0 200
   ]
 
