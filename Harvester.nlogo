@@ -136,7 +136,7 @@ to go
 ;  if ticks = 1 [ if file-exists? "grow-resource-test-out.csv" [ file-delete "grow-resource-test-out.csv" ]]
 ;  file-open "grow-resource-test-out.csv"  ; Temporary test output for grow-resource
 ;  if ticks = 1 [file-print "Patch,resource,harvest,max-resource,growth"]  ; Header for test output
-  ask patches [ grow-resource ]
+  grow-resource
 ;  file-close  ; Temporary test output
 
   ; Test output for harvest-resource. To use, un-comment these file- statements and
@@ -144,7 +144,7 @@ to go
 ;  if ticks = 1 [ if file-exists? "harvest-test-out.csv" [ file-delete "harvest-test-out.csv" ]]
 ;  file-open "harvest-test-out.csv"  ; Temporary test output for harvest-resource
 ;  if ticks = 1 [file-print "Who,energy,behavior-type,max-resource,greediness,num-harvesters,cooperative-harvest,selfish-harvest,harvest"]  ; Header for test output
-  ask turtles [ harvest-resource ]
+  harvest-resource
 ;  file-close  ; Temporary test output
 
   ask selfish-harvesters [ get-punished ]
@@ -159,57 +159,62 @@ to go
 
 end
 
-to grow-resource ; A patch procedure
+to grow-resource
 
-  let harvest-here-last-tick sum [harvest] of turtles-here
-  let prev-resource resource - harvest-here-last-tick
-
-  set resource-growth (resource-growth-rate * prev-resource * (1 - (prev-resource / max-resource)))
-
-;  file-print (word self "," prev-resource "," harvest-here-last-tick "," max-resource "," resource-growth)
-
-  set resource prev-resource + resource-growth
-
-  ; Some defensive programming: resource should not be negative
-  if resource < 0.0
+  ask patches
   [
-    inspect self
-    error "Resource is negative in grow-resource"
+    let harvest-here-last-tick sum [harvest] of turtles-here
+    let prev-resource resource - harvest-here-last-tick
+
+    set resource-growth (resource-growth-rate * prev-resource * (1 - (prev-resource / max-resource)))
+
+    ;  file-print (word self "," prev-resource "," harvest-here-last-tick "," max-resource "," resource-growth)
+
+    set resource prev-resource + resource-growth
+
+    ; Some defensive programming: resource should not be negative
+    if resource < 0.0
+    [
+      inspect self
+      error "Resource is negative in grow-resource"
+    ]
+
+    set pcolor scale-color green resource 0 200
+
+    ; Update total resource production
+    set cumulative-resource-growth cumulative-resource-growth + resource-growth
   ]
-
-  set pcolor scale-color green resource 0 200
-
-  ; Update total resource production
-  set cumulative-resource-growth cumulative-resource-growth + resource-growth
 
 end
 
-to harvest-resource ; A turtle procedure
-
-  let old-energy energy  ; For test output only
-
-  set cooperative-harvest (max-resource * resource-growth-rate) / (8 * count turtles-here)
-
-  ifelse behavior-type = "cooperative"
+to harvest-resource
+  ask turtles
   [
-    set harvest cooperative-harvest
-    set cumulative-harvest-coop cumulative-harvest-coop + harvest
-  ]
-  [
-    set selfish-harvest maintenance-energy * (1 + greediness)
-    ifelse selfish-harvest > cooperative-harvest
-    [
-      set harvest selfish-harvest
-      set i-was-greedy? true
-    ]
+    let old-energy energy  ; For test output only
+
+    set cooperative-harvest (max-resource * resource-growth-rate) / (8 * count turtles-here)
+
+    ifelse behavior-type = "cooperative"
     [
       set harvest cooperative-harvest
-      set i-was-greedy? false
-    ] ; ifelse selfish-harvest > cooperative-harvest
-    set cumulative-harvest-selfish cumulative-harvest-coop + harvest
-  ] ; ifelse behavior-type
+      set cumulative-harvest-coop cumulative-harvest-coop + harvest
+    ]
+    [
+      set selfish-harvest maintenance-energy * (1 + greediness)
+      ifelse selfish-harvest > cooperative-harvest
+      [
+        set harvest selfish-harvest
+        set i-was-greedy? true
+      ]
+      [
+        set harvest cooperative-harvest
+        set i-was-greedy? false
+      ] ; ifelse selfish-harvest > cooperative-harvest
+      set cumulative-harvest-selfish cumulative-harvest-coop + harvest
+    ] ; ifelse behavior-type
 
-  set energy energy + harvest
+    set energy energy + harvest
+  ]
 
   ; Temporary test output
 ;  file-print (word who "," old-energy "," behavior-type "," max-resource "," greediness ","
