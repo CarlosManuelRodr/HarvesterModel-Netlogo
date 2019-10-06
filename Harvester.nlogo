@@ -42,7 +42,6 @@ turtles-own
 ]
 
 to setup
-
   ca
   reset-ticks
 
@@ -95,7 +94,7 @@ to setup
   ]
 
   ; Create the harvesters
-  crt 5000
+  crt harvester-number
   [
     move-to one-of patches
     set energy 10
@@ -352,10 +351,10 @@ ticks
 50.0
 
 BUTTON
-16
-14
-79
-47
+295
+135
+358
+168
 NIL
 setup
 NIL
@@ -369,10 +368,10 @@ NIL
 1
 
 BUTTON
-85
-14
-148
-47
+364
+135
+427
+168
 NIL
 go
 T
@@ -386,10 +385,10 @@ NIL
 1
 
 BUTTON
-153
-13
-216
-46
+432
+134
+495
+167
 step
 go
 NIL
@@ -476,7 +475,7 @@ punishment-probability
 punishment-probability
 0
 1
-1.0
+0.2
 .01
 1
 NIL
@@ -510,6 +509,21 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" ""
+
+SLIDER
+20
+15
+202
+48
+harvester-number
+harvester-number
+1
+5000
+5000.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 # HARVESTER MODEL
