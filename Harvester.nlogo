@@ -25,6 +25,8 @@ patches-own
   resource
   max-resource
   resource-growth  ; a convenience variable for output
+  totharvest       ; Total harvest from all the turtles in the patch
+  maximum-sustainable-yield
 ]
 
 turtles-own
@@ -138,7 +140,7 @@ to go
 ;  if ticks = 1 [file-print "Patch,resource,harvest,max-resource,growth"]  ; Header for test output
   grow-resource
 ;  file-close  ; Temporary test output
-
+  select-harvest
   ; Test output for harvest-resource. To use, un-comment these file- statements and
   ; the file-print statement in harvest-resource
 ;  if ticks = 1 [ if file-exists? "harvest-test-out.csv" [ file-delete "harvest-test-out.csv" ]]
@@ -175,8 +177,7 @@ to grow-resource
     ; Some defensive programming: resource should not be negative
     if resource < 0.0
     [
-      inspect self
-      error "Resource is negative in grow-resource"
+      set resource 0.001
     ]
 
     set pcolor scale-color green resource 0 200
@@ -184,15 +185,19 @@ to grow-resource
     ; Update total resource production
     set cumulative-resource-growth cumulative-resource-growth + resource-growth
   ]
-
 end
 
-to harvest-resource
+to select-harvest
+  ask patches
+  [
+    set maximum-sustainable-yield max-resource * resource-growth-rate / 8
+    if maximum-sustainable-yield > resource [set maximum-sustainable-yield resource]
+    if resource <= 0 [set maximum-sustainable-yield 0]
+  ]
+
   ask turtles
   [
-    let old-energy energy  ; For test output only
-
-    set cooperative-harvest (max-resource * resource-growth-rate) / (8 * count turtles-here)
+    set cooperative-harvest maximum-sustainable-yield / (count turtles-here)
 
     ifelse behavior-type = "cooperative"
     [
@@ -212,7 +217,26 @@ to harvest-resource
       ] ; ifelse selfish-harvest > cooperative-harvest
       set cumulative-harvest-selfish cumulative-harvest-coop + harvest
     ] ; ifelse behavior-type
+  ]
+end
 
+to harvest-resource
+  ask patches
+  [
+    let pophere count turtles-here
+    ifelse pophere > 0
+		[ set totharvest sum [harvest] of turtles-here]
+		[ set totharvest 0 ]
+  ]
+
+  ask turtles
+   [
+    ;; If there is no enought resource, a proportional reduction of harvesting level is applied
+    if totharvest > resource
+    [
+      set harvest harvest - ((harvest * (totharvest - resource)) / totharvest)
+    ]
+    if harvest < 0 [set harvest 0]
     set energy energy + harvest
   ]
 
