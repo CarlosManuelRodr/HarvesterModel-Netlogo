@@ -76,7 +76,7 @@ to setup
           set max-resource random-normal max-resource-mean max-resource-sd
           if max-resource < 0.0 ; Normal distribution has a slight probability of negative max-resource
           [
-             set max-resource 0.0 ; Manual fix.
+             set max-resource 0.01 ; Manual fix.
           ]
         ]
       ]
@@ -132,6 +132,9 @@ end
 to go
   tick
   if ticks > 1000 [ stop ]
+
+  set cooperative-harvesters turtles with [behavior-type = "cooperative"]
+  set selfish-harvesters turtles with [behavior-type = "selfish"]
 
   ; Test output for grow-resource. To use, un-comment these file- statements and
   ; the file-print statement in grow-resource
@@ -407,7 +410,7 @@ CHOOSER
 landscape-type
 landscape-type
 "homogeneous" "uniform" "normal" "exponential"
-1
+3
 
 PLOT
 8
@@ -473,7 +476,7 @@ punishment-probability
 punishment-probability
 0
 1
-0.2
+1.0
 .01
 1
 NIL
