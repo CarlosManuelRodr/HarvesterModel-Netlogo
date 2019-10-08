@@ -218,7 +218,7 @@ to select-harvest
         set harvest cooperative-harvest
         set i-was-greedy? false
       ] ; ifelse selfish-harvest > cooperative-harvest
-      set cumulative-harvest-selfish cumulative-harvest-coop + harvest
+      set cumulative-harvest-selfish cumulative-harvest-selfish + harvest
     ] ; ifelse behavior-type
   ]
 end
